@@ -1,0 +1,63 @@
+Reproducible Research - Peer Assessment 1
+======================================
+
+## Loading and Preprocessing the data
+
+Get the data and view structure and summary of data
+
+```{r echo=TRUE}
+activity <- read.csv("activity.csv")
+str(activity)
+summary(activity)
+```
+
+What is the mean number of steps taken per day?
+
+``` {r echo=TRUE}
+hist(activity$steps[!is.na(activity$steps)])
+mean(activity$steps, na.rm=TRUE)
+median(activity$steps, na.rm=TRUE)
+```
+
+What is the average daily activity pattern?
+
+install required packages
+
+```{r echo=FALSE}
+install.packages("ggplot2", repos="http://cran.rstudio.com/")
+install.packages("reshape", repos="http://cran.rstudio.com/")
+library(ggplot2)
+library(reshape)
+````
+
+Make time series plot of 5 minute  
+interval (x-axis) and the average  
+number of steps taken, averaged  
+across all days (y-axis)
+
+```{r echo=TRUE}
+ac <- activity[,c(1,3)]
+md <- melt(ac, id="interval", measured="steps")
+ct <- cast(md, interval ~ variable, fun.aggregate = mean, na.rm = TRUE)
+graph <- ggplot(ct, aes(interval, steps))
+graph + geom_line()
+```
+
+which 5 minute interval, on average across all the days  
+in the dataset, contains the maximum number of steps?
+
+```{r echo=TRUE}
+ct[order(-ct$steps),][1,"interval"]
+```
+
+Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+
+```{r echo=TRUE}
+for( i in 1:length(activity2$interval) ) {    
+    if ( is.na(activity2$steps[i]) ) {
+        activity2$steps[i] <- ct$steps[ct$interval == activity2$interval[i]]
+    }     
+}
+```
+
+
